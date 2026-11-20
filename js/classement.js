@@ -1,22 +1,28 @@
 // Affichage de la liste : classement, ruptures, stations non suivies.
 import { CONFIG } from "./config.js";
 import { estAncien } from "./selection.js";
-import { depuis, el, kilometres, lienGoogleMaps, montant, nomStation, prixLitre } from "./format.js";
+import { couleurPrix, depuis, el, kilometres, lienGoogleMaps, montant, nomStation, prixLitre } from "./format.js";
 
 /** Remplit la liste <ol> du classement. `surVoir(id)` est appelé par le bouton « Sur la carte ». */
 export function afficherClassement(liste, selection, { surVoir }) {
   liste.replaceChildren(...selection.enVente.map((s) => ligneStation(s, selection, surVoir)));
 }
 
-function ligneStation(s, { code, min }, surVoir) {
+function ligneStation(s, selection, surVoir) {
+  const { code, min } = selection;
   const c = s.carburants[code];
   const ecartPlein = (c.prix - min) * CONFIG.pleinLitres;
   const ancien = estAncien(c.maj);
 
   return el(
     "li",
-    { class: "station", "data-id": s.id },
-    el("span", { class: "rang", "aria-label": `${s.rang}e` }, s.rang),
+    {
+      class: "station",
+      "data-id": s.id,
+      // Toute la carte est cliquable, sauf ses boutons et liens.
+      onclick: (e) => e.target.closest("a, button") || surVoir(s.id),
+    },
+    el("span", { class: "rang", style: `background: ${couleurPrix(c.prix, selection)}`, "aria-label": `${s.rang}e` }, s.rang),
     el(
       "div",
       { class: "infos" },

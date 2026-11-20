@@ -1,128 +1,262 @@
+/* ==========================================================================
+   RadEssence
+   Bureau : panneau à gauche (réglages + classement), carte à droite.
+   Mobile (≤ 820 px) : un seul des deux à la fois, bouton flottant pour basculer.
+   ========================================================================== */
+
 /* Couleurs et tailles réutilisées partout : à modifier ici. */
 :root {
-  --fond: #f6f7f9;
-  --carte-fond: #ffffff;
-  --texte: #1c1f23;
-  --texte-doux: #5d6670;
-  --bordure: #e1e4e8;
+  --fond: #f3f5f8;
+  --surface: #ffffff;
+  --texte: #171a1f;
+  --texte-doux: #5b6470;
+  --bordure: #dfe3e8;
   --accent: #0b6bcb;
+  --sur-accent: #ffffff;
   --bon: #1a7f37;
   --alerte: #b35900;
-  --rayon: 10px;
+  --police: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --police-titre: "Outfit", var(--police); /* titres, prix, onglets */
+  --rayon: 12px;
+  --ombre: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 8px rgba(16, 24, 40, 0.04);
+  --largeur-panneau: clamp(380px, 34vw, 470px);
   color-scheme: light dark;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --fond: #121416;
-    --carte-fond: #1c1f23;
-    --texte: #e8eaed;
-    --texte-doux: #9aa3ad;
-    --bordure: #30363d;
-    --accent: #58a6ff;
+    --fond: #0f1114;
+    --surface: #191c21;
+    --texte: #e9ebee;
+    --texte-doux: #98a1ac;
+    --bordure: #2b3038;
+    --accent: #4c9dff;
+    --sur-accent: #06121f;
     --bon: #3fb950;
     --alerte: #f0883e;
+    --ombre: none;
   }
 }
 
 * { box-sizing: border-box; }
 
+html, body { height: 100%; }
+
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--police);
   background: var(--fond);
   color: var(--texte);
   line-height: 1.4;
+  overflow: hidden; /* le défilement se fait dans .defilement */
 }
 
 a { color: var(--accent); }
 
-/* En-tête */
-.entete { padding: 1rem 1rem 0.5rem; max-width: 1400px; margin: 0 auto; }
-.entete h1 { margin: 0 0 0.5rem; font-size: clamp(1.15rem, 5vw, 1.5rem); }
-.ligne-resume { display: flex; gap: 0.75rem; align-items: flex-start; }
-.resume { margin: 0; color: var(--texte-doux); flex: 1; }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-button {
-  font: inherit;
-  cursor: pointer;
-  border: 1px solid var(--bordure);
-  background: var(--carte-fond);
-  color: var(--texte);
-  border-radius: 999px;
-  padding: 0.3rem 0.8rem;
+/* ---------- Mise en page ---------- */
+
+.app { display: grid; grid-template-columns: var(--largeur-panneau) 1fr; height: 100dvh; }
+
+.panneau {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--fond);
+  border-right: 1px solid var(--bordure);
 }
-button:hover { border-color: var(--accent); }
-button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-.onglets { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
-.onglet[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
-.compte { margin-left: 0.4rem; font-size: 0.8em; opacity: 0.75; }
+.defilement { flex: 1; min-height: 0; overflow-y: auto; padding: 0.75rem 1rem 1rem; }
 
-/* Mise en page : liste à gauche, carte à droite ; empilées sur mobile. */
-.contenu {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0.5rem 1rem 1rem;
+.zone-carte { position: relative; min-height: 0; }
+.carte { width: 100%; height: 100%; background: var(--fond); }
+
+.bascule { display: none; } /* mobile seulement */
+
+/* ---------- En-tête : marque, zone, carburants, résumé ---------- */
+
+.entete {
   display: grid;
-  gap: 1rem;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
-  align-items: start;
+  gap: 0.7rem;
+  padding: 1rem 1rem 0.8rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--bordure);
 }
-.carte {
-  position: sticky;
-  top: 1rem;
-  height: calc(100vh - 2rem);
-  border-radius: var(--rayon);
+
+.marque { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 0.6rem; }
+.marque h1 { display: flex; align-items: center; gap: 0.4rem; margin: 0; font-family: var(--police-titre); font-size: 1.5rem; letter-spacing: -0.02em; }
+.logo { width: 1.15em; height: 1.15em; flex: none; }
+.marque p { margin: 0; font-size: 0.85rem; color: var(--texte-doux); }
+
+.ligne-recherche { display: flex; gap: 0.5rem; }
+.recherche { position: relative; flex: 1; min-width: 0; }
+.recherche input {
+  width: 100%;
+  height: 2.6rem;
+  padding: 0 1rem;
+  border-radius: 999px;
   border: 1px solid var(--bordure);
+  background: var(--fond);
 }
+.recherche input::placeholder { color: var(--texte-doux); }
 
-@media (max-width: 900px) {
-  .contenu { grid-template-columns: 1fr; }
-  .carte { order: -1; position: static; height: 45vh; }
+.suggestions {
+  position: absolute;
+  z-index: 2000; /* au-dessus de la carte */
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0.3rem;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
+.suggestions li { display: flex; flex-direction: column; padding: 0.5rem 0.7rem; border-radius: 8px; cursor: pointer; }
+.suggestions li:hover, .suggestions li[aria-selected="true"] { background: var(--fond); }
+.suggestions small { color: var(--texte-doux); }
 
-/* Classement */
+.bouton-position {
+  flex: none;
+  height: 2.6rem;
+  padding: 0 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--bordure);
+  background: var(--surface);
+  white-space: nowrap;
+}
+.bouton-position:hover, .bouton-rond:hover { border-color: var(--accent); }
+.bouton-position:disabled { opacity: 0.5; cursor: wait; }
+
+.rayon { display: flex; align-items: center; gap: 0.7rem; font-size: 0.9rem; color: var(--texte-doux); }
+.rayon input { flex: 1; min-width: 0; height: 1.6rem; accent-color: var(--accent); }
+.rayon output { min-width: 3.2em; text-align: right; font-weight: 600; color: var(--texte); font-variant-numeric: tabular-nums; }
+
+.onglets { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.onglet {
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--bordure);
+  background: var(--surface);
+  white-space: nowrap;
+}
+.onglet:hover { border-color: var(--accent); }
+.onglet[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--sur-accent); font-weight: 600; }
+.compte { margin-left: 0.35rem; font-size: 0.78em; opacity: 0.7; font-weight: 400; }
+
+.ligne-resume { display: flex; align-items: center; gap: 0.6rem; }
+.resume { flex: 1; margin: 0; font-size: 0.9rem; color: var(--texte-doux); }
+.resume .chiffres { display: block; color: var(--texte); }
+.resume .contexte { display: block; font-size: 0.8rem; }
+.bouton-rond {
+  flex: none;
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 50%;
+  border: 1px solid var(--bordure);
+  background: var(--surface);
+  font-size: 1.1rem;
+  line-height: 1;
+}
+body.chargement .bouton-rond { animation: tourne 0.9s linear infinite; }
+@keyframes tourne { to { transform: rotate(360deg); } }
+
+/* ---------- Classement ---------- */
+
 .classement { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+body.chargement .classement { opacity: 0.45; transition: opacity 0.2s; }
 
 .station {
   display: grid;
-  grid-template-columns: 2.2rem 1fr auto;
-  grid-template-areas: "rang infos prix" "rang actions actions";
-  gap: 0.25rem 0.75rem;
+  grid-template-columns: 2rem minmax(0, 1fr) auto;
+  grid-template-areas: "rang infos prix" ". actions actions";
+  gap: 0.35rem 0.75rem;
   align-items: center;
-  padding: 0.75rem;
-  background: var(--carte-fond);
+  padding: 0.75rem 0.85rem;
+  background: var(--surface);
   border: 1px solid var(--bordure);
   border-radius: var(--rayon);
+  box-shadow: var(--ombre);
+  cursor: pointer;
+  transition: border-color 0.15s;
 }
+.station:hover { border-color: var(--accent); }
 .station.active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
 
-.rang { grid-area: rang; font-size: 1.2rem; font-weight: 700; color: var(--texte-doux); text-align: center; }
-.station:first-child .rang { color: var(--bon); }
+/* Pastille du rang : même couleur que le point de la station sur la carte. */
+.rang {
+  grid-area: rang;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  color: #fff;
+  font-family: var(--police-titre);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
 
 .infos { grid-area: infos; display: flex; flex-direction: column; min-width: 0; }
-.lieu { color: var(--texte-doux); font-size: 0.9rem; }
-.badges { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.25rem; }
-.badge { font-size: 0.75rem; padding: 0.05rem 0.45rem; border-radius: 999px; background: var(--fond); color: var(--texte-doux); }
+.nom { overflow-wrap: anywhere; }
+.lieu { color: var(--texte-doux); font-size: 0.88rem; }
+.badges { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.3rem; }
+.badge { font-size: 0.74rem; padding: 0.08rem 0.5rem; border-radius: 999px; background: var(--fond); color: var(--texte-doux); }
 .badge.alerte { color: var(--alerte); font-weight: 600; }
 
-.prix { grid-area: prix; text-align: right; display: flex; flex-direction: column; }
-.prix-litre { font-size: 1.35rem; font-weight: 700; font-variant-numeric: tabular-nums; }
-.ecart { font-size: 0.8rem; color: var(--texte-doux); }
+.prix { grid-area: prix; display: flex; flex-direction: column; text-align: right; }
+.prix-litre { font-family: var(--police-titre); font-size: 1.4rem; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ecart { font-size: 0.78rem; color: var(--texte-doux); white-space: nowrap; }
 .ecart.meilleur { color: var(--bon); font-weight: 600; }
 
-.actions { grid-area: actions; display: flex; gap: 0.75rem; align-items: center; font-size: 0.9rem; }
-.actions button { font-size: 0.85rem; padding: 0.15rem 0.6rem; }
+.actions { grid-area: actions; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.actions button, .actions a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  padding: 0 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--bordure);
+  background: transparent;
+  font-size: 0.82rem;
+  text-decoration: none;
+}
+.actions button:hover, .actions a:hover { border-color: var(--accent); }
 
-/* Encarts sous le classement */
-.encart { margin-top: 1.5rem; color: var(--texte-doux); font-size: 0.9rem; }
-.encart h2 { font-size: 1rem; color: var(--texte); margin: 0 0 0.4rem; }
+/* ---------- Encarts et pied ---------- */
+
+.encart { margin-top: 1.5rem; color: var(--texte-doux); font-size: 0.88rem; }
+.encart h2 { font-size: 0.95rem; color: var(--texte); margin: 0 0 0.4rem; }
 .encart p { margin: 0 0 0.4rem; }
 .encart ul { margin: 0; padding-left: 1.2rem; }
 .encart li { margin-bottom: 0.3rem; }
 
-/* Carte : bulles et légende */
+.pied { margin-top: 1.5rem; font-size: 0.78rem; color: var(--texte-doux); }
+
+/* ---------- Carte ---------- */
+
+.astuce {
+  position: absolute;
+  z-index: 500;
+  top: 0.7rem;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 0.3rem 0.8rem;
+  max-width: calc(100% - 7rem);
+  border-radius: 999px;
+  background: rgba(20, 24, 30, 0.8);
+  color: #fff;
+  font-size: 0.78rem;
+  text-align: center;
+  pointer-events: none;
+}
+
 .bulle { line-height: 1.5; }
 .bulle-prix { font-size: 1.1rem; font-weight: 700; }
 .bulle-id { display: block; margin-top: 0.3rem; color: #888; }
@@ -131,17 +265,93 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  background: rgba(255, 255, 255, 0.9);
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
   color: #333;
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
 }
 .degrade {
-  width: 60px;
-  height: 10px;
-  border-radius: 5px;
+  width: 54px;
+  height: 8px;
+  border-radius: 4px;
   background: linear-gradient(to right, hsl(120, 70%, 40%), hsl(60, 70%, 40%), hsl(0, 70%, 40%));
 }
 
-.pied { max-width: 1400px; margin: 0 auto; padding: 0 1rem 1.5rem; font-size: 0.85rem; color: var(--texte-doux); }
+/* Point central de la zone, à faire glisser */
+.centre-zone {
+  border-radius: 50%;
+  background: #0b6bcb;
+  border: 3px solid #fff;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+  cursor: grab;
+}
+.centre-zone:active { cursor: grabbing; }
+
+/* ==========================================================================
+   Mobile : liste OU carte, en plein écran sous l'en-tête
+   ========================================================================== */
+
+@media (max-width: 820px) {
+  .app { display: flex; flex-direction: column; }
+  .panneau { border-right: 0; }
+
+  body[data-vue="liste"] .panneau { flex: 1; }
+  body[data-vue="liste"] .zone-carte { display: none; }
+  body[data-vue="carte"] .defilement { display: none; }
+  body[data-vue="carte"] .zone-carte { flex: 1; }
+
+  .entete {
+    gap: 0.55rem;
+    padding: calc(0.6rem + env(safe-area-inset-top)) 0.75rem 0.6rem;
+  }
+  .marque h1 { font-size: 1.25rem; }
+  .marque p { font-size: 0.78rem; }
+
+  /* Bouton position réduit à son icône */
+  .bouton-position { width: 2.6rem; padding: 0; }
+  .bouton-position span { display: none; }
+
+  /* Les carburants défilent sur une ligne, jusqu'aux bords de l'écran */
+  .onglets {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin: 0 -0.75rem;
+    padding: 0 0.75rem;
+    scrollbar-width: none;
+  }
+  .onglets::-webkit-scrollbar { display: none; }
+  .onglet { flex: none; }
+
+  .resume { font-size: 0.85rem; }
+
+  .defilement { padding: 0.6rem 0.75rem calc(5rem + env(safe-area-inset-bottom)); } /* place pour le bouton flottant */
+
+  .station { padding: 0.7rem; gap: 0.35rem 0.6rem; }
+  .prix-litre { font-size: 1.25rem; }
+  .actions button, .actions a { min-height: 2.3rem; } /* cibles tactiles plus grandes */
+
+  .astuce { max-width: calc(100% - 5.5rem); font-size: 0.72rem; }
+
+  .bascule {
+    display: block;
+    position: fixed;
+    z-index: 1500;
+    left: 50%;
+    bottom: calc(1rem + env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    padding: 0.7rem 1.4rem;
+    border: 0;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--sur-accent);
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  }
+  /* La légende et les crédits de la carte passent au-dessus du bouton flottant */
+  body[data-vue="carte"] .leaflet-bottom { bottom: calc(4rem + env(safe-area-inset-bottom)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}

@@ -64,3 +64,9 @@ export function el(balise, attributs = {}, ...enfants) {
   }
   return noeud;
 }
+
+/** Vert pour le moins cher, rouge pour le plus cher : même couleur sur la carte et dans la liste. */
+export function couleurPrix(prix, { min, max }) {
+  const t = max > min ? (prix - min) / (max - min) : 0;
+  return `hsl(${Math.round(120 * (1 - t))}, 70%, 40%)`;
+}
