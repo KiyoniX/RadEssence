@@ -1,5 +1,9 @@
+// Commun à RadEssence et ControVisite : garder ce fichier identique dans les deux dépôts
+// (vérification : npm run verifier-commun -- ../AutreDepot).
+//
 // Recherche d'adresses et nom d'un point : API Adresse de l'IGN (Géoplateforme), gratuite et sans clé.
-import { CONFIG } from "./config.js";
+// Réglages lus dans config.js : CONFIG.geocodage, CONFIG.reseau.ecartAdresseMs.
+import { CONFIG } from "../config.js";
 import { requeteJson } from "./reseau.js";
 
 const dejaCherche = new Map(); // texte → lieux, pour ne pas redemander la même chose

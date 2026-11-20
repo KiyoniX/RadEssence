@@ -1,18 +1,27 @@
-// Carte Leaflet (variable globale L, chargée par index.html).
-import { CONFIG } from "./config.js";
-import { couleurPrix, depuis, el, lienGoogleMaps, nomStation, prixLitre } from "./format.js";
-
-const GRIS = "#8a8a8a";
-const BLEU_ZONE = "#0b6bcb";
+// Commun à RadEssence et ControVisite : garder ce fichier identique dans les deux dépôts
+// (vérification : npm run verifier-commun -- ../AutreDepot).
+//
+// Carte Leaflet (variable globale L, chargée par index.html) : la zone (cercle + point central à faire
+// glisser) et des points colorés. Ce que montre chaque point est décidé par le site (js/marqueurs.js).
+// Couleur de la zone : variable CSS --couleur-zone (css/site.css).
+// Réglages lus dans config.js : CONFIG.zoneParDefaut, CONFIG.tuiles.
+import { CONFIG } from "../config.js";
+import { el } from "./format.js";
 
 /**
- * Crée la carte dans `conteneur`.
- *   surClicStation(id)          clic sur une station
- *   surDeplacerCentre({lat, lon}) clic sur la carte ou point central déplacé
- * Renvoie { afficherZone, apercuRayon, afficherStations, montrer, redimensionner }.
+ * Un point à afficher :
+ *   { id, lat, lon, couleur, taille = 8, infobulle, bulle: () => Element, cliquable = true }
+ * Les points sont dessinés dans l'ordre du tableau : le dernier passe au-dessus.
+ *
+ * @param conteneur                     élément qui reçoit la carte
+ * @param surClicPoint(id)              clic sur un point cliquable
+ * @param surDeplacerCentre({lat, lon}) clic sur la carte ou point central déplacé
+ * @returns {{ afficherZone, apercuRayon, afficherPoints, montrer, redimensionner }}
  */
-export function creerCarte(conteneur, { surClicStation, surDeplacerCentre }) {
+export function creerCarte(conteneur, { surClicPoint, surDeplacerCentre }) {
   const { lat, lon } = CONFIG.zoneParDefaut;
+  const couleurZone = getComputedStyle(document.documentElement).getPropertyValue("--couleur-zone").trim() || "#0b6bcb";
+
   const carte = L.map(conteneur).setView([lat, lon], 12);
   L.tileLayer(CONFIG.tuiles.url, { attribution: CONFIG.tuiles.attribution, maxZoom: 19 }).addTo(carte);
   ajouterLegende(carte);
@@ -20,7 +29,7 @@ export function creerCarte(conteneur, { surClicStation, surDeplacerCentre }) {
   // La zone : un cercle et un point central qu'on peut faire glisser.
   const cercle = L.circle([lat, lon], {
     radius: 1000,
-    color: BLEU_ZONE,
+    color: couleurZone,
     weight: 2,
     dashArray: "6 6",
     fillOpacity: 0.04,
@@ -62,34 +71,27 @@ export function creerCarte(conteneur, { surClicStation, surDeplacerCentre }) {
     cercle.setRadius(rayonKm * 1000);
   }
 
-  function afficherStations(selection, horsFlux) {
+  function afficherPoints(points) {
     calque.clearLayers();
     marqueurs.clear();
-    const options = { color: "#fff", weight: 2, fillOpacity: 1, bubblingMouseEvents: false };
-
-    for (const s of horsFlux) {
-      L.circleMarker([s.lat, s.lon], { ...options, radius: 6, fillColor: GRIS })
-        .bindTooltip(`${nomStation(s)} : prix non publiés`)
-        .bindPopup(() => bulle(s, null))
-        .addTo(calque);
-    }
-
-    // Du plus cher au moins cher : les stations les moins chères sont dessinées par-dessus.
-    for (const s of [...selection.enVente].reverse()) {
-      const c = s.carburants[selection.code];
-      const marqueur = L.circleMarker([s.lat, s.lon], {
-        ...options,
-        radius: s.rang === 1 ? 11 : 8,
-        fillColor: couleurPrix(c.prix, selection),
+    for (const p of points) {
+      const marqueur = L.circleMarker([p.lat, p.lon], {
+        radius: p.taille ?? 8,
+        color: "#fff",
+        weight: 2,
+        fillColor: p.couleur,
+        fillOpacity: 1,
+        bubblingMouseEvents: false, // un clic sur un point ne déplace pas la zone
       })
-        .bindTooltip(prixLitre(c.prix), { direction: "top" })
-        .bindPopup(() => bulle(s, c))
-        .on("click", () => surClicStation(s.id))
+        .bindTooltip(p.infobulle, { direction: "top" })
+        .bindPopup(p.bulle)
         .addTo(calque);
-      marqueurs.set(s.id, marqueur);
+      if (p.cliquable !== false) marqueur.on("click", () => surClicPoint(p.id));
+      marqueurs.set(p.id, marqueur);
     }
   }
 
+  /** Centre la carte sur un point et ouvre sa bulle. */
   function montrer(id) {
     const marqueur = marqueurs.get(id);
     if (!marqueur) return;
@@ -100,24 +102,7 @@ export function creerCarte(conteneur, { surClicStation, surDeplacerCentre }) {
   /** À appeler quand la carte change de taille ou redevient visible (bascule mobile). */
   const redimensionner = () => carte.invalidateSize();
 
-  return { afficherZone, apercuRayon, afficherStations, montrer, redimensionner };
-}
-
-/** Contenu de la bulle d'une station. `c` = carburant affiché, ou null pour une station hors flux. */
-function bulle(s, c) {
-  return el(
-    "div",
-    { class: "bulle" },
-    el("strong", {}, nomStation(s)),
-    el("br"),
-    `${s.cp} ${s.ville}`,
-    el("br"),
-    c ? el("span", { class: "bulle-prix" }, prixLitre(c.prix)) : "Prix non publiés",
-    c && ` · ${depuis(c.maj)}`,
-    el("br"),
-    el("a", { href: lienGoogleMaps(s), target: "_blank", rel: "noopener" }, "Ouvrir dans Google Maps ↗"),
-    s.id && el("small", { class: "bulle-id" }, `n° ${s.id}`),
-  );
+  return { afficherZone, apercuRayon, afficherPoints, montrer, redimensionner };
 }
 
 function ajouterLegende(carte) {

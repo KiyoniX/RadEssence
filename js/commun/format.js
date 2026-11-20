@@ -1,22 +1,32 @@
-// Petites fonctions d'affichage, sans état.
+// Commun à RadEssence et ControVisite : garder ce fichier identique dans les deux dépôts
+// (vérification : npm run verifier-commun -- ../AutreDepot).
+//
+// Petites fonctions d'affichage, sans état. Seule el() a besoin d'un navigateur.
 
-const eurosLitre = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", minimumFractionDigits: 3 });
 const euros = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" });
+const eurosRonds = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+const eurosMillimes = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", minimumFractionDigits: 3 });
 const relatif = new Intl.RelativeTimeFormat("fr", { numeric: "auto" });
 const heureMinute = new Intl.DateTimeFormat("fr-FR", { hour: "2-digit", minute: "2-digit" });
 
-export const prixLitre = (prix) => eurosLitre.format(prix); // 2,007 €
-export const montant = (valeur) => euros.format(valeur); // 11,90 €
+/** 67 € pour un montant rond, 67,50 € sinon. */
+export const montant = (valeur) => (Number.isInteger(valeur) ? eurosRonds : euros).format(valeur);
+/** Prix au litre, au millième : 2,007 €. */
+export const prixLitre = (prix) => eurosMillimes.format(prix);
 export const heure = (date) => heureMinute.format(date); // 14:32
 export const kilometres = (km) => `${km.toLocaleString("fr-FR", { maximumFractionDigits: 1 })} km`;
 
-/** « il y a 3 heures », « hier »… */
+/** « il y a 3 heures », « il y a 5 mois », « il y a 6 ans »… */
 export function depuis(date, maintenant = new Date()) {
   const minutes = Math.round((date - maintenant) / 60000);
   if (Math.abs(minutes) < 60) return relatif.format(minutes, "minute");
   const heures = Math.round(minutes / 60);
   if (Math.abs(heures) < 48) return relatif.format(heures, "hour");
-  return relatif.format(Math.round(heures / 24), "day");
+  const jours = Math.round(heures / 24);
+  if (Math.abs(jours) < 45) return relatif.format(jours, "day");
+  const mois = Math.round(jours / 30.44);
+  if (Math.abs(mois) < 18) return relatif.format(mois, "month");
+  return relatif.format(Math.round(jours / 365.25), "year");
 }
 
 /** Distance à vol d'oiseau entre deux objets {lat, lon}, en km. */
@@ -40,15 +50,23 @@ export function joliTexte(texte) {
     );
 }
 
-/** Nom affiché d'une station : « Enseigne, adresse » si l'enseigne est connue, sinon l'adresse. */
-export const nomStation = (s) => (s.nom ? `${s.nom}, ${s.adresse}` : s.adresse);
+/** Lien Google Maps vers un point {lat, lon}. */
+export const lienGoogleMaps = ({ lat, lon }) => `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
 
-export const lienGoogleMaps = (s) => `https://www.google.com/maps/search/?api=1&query=${s.lat},${s.lon}`;
+/** « 0473123456 » → « 04 73 12 34 56 » ; laisse intact un autre format. */
+export const telephoneLisible = (tel) => (/^0\d{9}$/.test(tel) ? tel.replace(/(\d{2})(?=\d)/g, "$1 ") : tel);
+
+/** Vert pour le moins cher, rouge pour le plus cher : même couleur sur la carte et dans la liste. */
+export function couleurPrix(prix, { min, max }) {
+  const t = max > min ? (prix - min) / (max - min) : 0;
+  return `hsl(${Math.round(120 * (1 - t))}, 70%, 40%)`;
+}
 
 /**
  * Crée un élément DOM. Le texte passe toujours par des nœuds texte : rien venant des données n'est
  * interprété comme du HTML.
- *   el("a", { class: "lien", href: "…", onclick: f }, "texte", autreElement)
+ *   el("a", { class: "lien", href: "…", onclick: f }, "texte", autreElement, [tableau, d'enfants])
+ * Les enfants null, undefined ou false sont ignorés.
  */
 export function el(balise, attributs = {}, ...enfants) {
   const noeud = document.createElement(balise);
@@ -58,15 +76,9 @@ export function el(balise, attributs = {}, ...enfants) {
     else if (nom === "class") noeud.className = valeur;
     else noeud.setAttribute(nom, valeur === true ? "" : valeur);
   }
-  for (const enfant of enfants.flat()) {
+  for (const enfant of enfants.flat(Infinity)) {
     if (enfant == null || enfant === false) continue;
     noeud.append(enfant instanceof Node ? enfant : String(enfant));
   }
   return noeud;
-}
-
-/** Vert pour le moins cher, rouge pour le plus cher : même couleur sur la carte et dans la liste. */
-export function couleurPrix(prix, { min, max }) {
-  const t = max > min ? (prix - min) / (max - min) : 0;
-  return `hsl(${Math.round(120 * (1 - t))}, 70%, 40%)`;
 }

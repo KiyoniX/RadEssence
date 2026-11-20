@@ -1,0 +1,14 @@
+{
+  "name": "radessence",
+  "private": true,
+  "description": "Le carburant le moins cher autour de toi (site statique, aucune dépendance).",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test",
+    "verifier-commun": "node outils/comparer-commun.mjs",
+    "local": "python -m http.server 8000"
+  }
+}

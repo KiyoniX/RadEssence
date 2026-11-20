@@ -18,25 +18,26 @@ Pas de framework ni d'étape de build : du HTML, du CSS et des modules JavaScrip
 
 | Fichier | Rôle |
 |---|---|
-| `js/config.js` | **Tous les réglages** : zone par défaut, rayon, carburants, taille du plein, seuils, tampon réseau |
+| `js/config.js` | **Tous les réglages** : identité, zone par défaut, rayon, carburants, taille du plein, seuils, tampon réseau |
 | `js/api.js` | Lit l'API officielle (avec cache par zone) et met chaque station au même format |
-| `js/reseau.js` | Passage obligé des requêtes : espacement et nouveaux essais sur erreur 429 |
-| `js/geocodage.js` | Recherche d'adresses et nom d'un point (API de l'IGN) |
-| `js/zone.js` | Commandes de la zone : recherche, « Autour de moi », curseur du rayon |
 | `js/selection.js` | Logique pure : trie, classe et filtre les stations pour un carburant (aucun accès au DOM) |
-| `js/classement.js` | Affiche la liste, les ruptures et les stations sans prix |
-| `js/carte.js` | La carte Leaflet (OpenStreetMap, sans clé) |
-| `js/format.js` | Petites fonctions : prix, dates relatives, distances, création d'éléments |
+| `js/classement.js` | Contenu des fiches du classement, ruptures et stations sans prix |
+| `js/marqueurs.js` | Ce que la carte montre pour chaque station (couleur, bulle) |
 | `js/main.js` | Point d'entrée : état (zone, carburant), adresse de la page, liaison des morceaux |
 | `data/noms.json` | Enseignes des stations (le flux officiel ne donne que l'adresse) |
 | `data/hors-flux.json` | Stations qui existent mais ne publient pas leurs prix |
-| `css/style.css` | Styles ; couleurs et polices dans les variables en haut du fichier (thème sombre automatique, mobile en bas) |
+| `js/commun/` | **Briques partagées avec ControVisite** (voir « Code partagé ») : carte, zone, chargement, mémoire, vue mobile, réseau, formats |
+| `css/commun.css` | Styles partagés : mise en page, thème sombre automatique, mobile en bas du fichier |
+| `css/site.css` | **Identité du site** : couleur d'accent et couleur de la zone |
+| `logo.svg` | Logo, aussi utilisé comme icône d'onglet |
+| `tests/` | Tests (`npm test`) ; `tests/commun/` est partagé avec ControVisite |
+| `outils/comparer-commun.mjs` | Vérifie que les fichiers partagés sont identiques à ceux de ControVisite |
 
 ## Modifier
 
 **Changer la zone affichée à la première visite** : `zoneParDefaut` dans `js/config.js`.
 
-**Changer les polices** : le lien Bunny Fonts dans `index.html`, puis `--police` et `--police-titre` dans `css/style.css`.
+**Changer les polices** : le lien Bunny Fonts dans `index.html`, puis `--police` et `--police-titre` dans `css/commun.css`.
 
 **Afficher l'enseigne d'une station** : clique sur la station sur la carte, la bulle donne son numéro (`n° 63000014`). Ajoute-le dans `data/noms.json` :
 
@@ -51,18 +52,45 @@ Pas de framework ni d'étape de build : du HTML, du CSS et des modules JavaScrip
 
 **Ajouter un carburant** : une ligne dans `carburants` de `js/config.js`. Le `code` est le préfixe des champs de l'API (`gazole_prix`, `e10_prix`…).
 
-## Tester en local
+## Développer
 
-Les modules JavaScript ne marchent pas en ouvrant `index.html` directement : il faut un petit serveur.
+Aucune dépendance à installer : il suffit de Node.js 20 ou plus récent (pour les tests) et de Python (pour le serveur local).
 
 ```sh
-python -m http.server 8000
-# puis http://localhost:8000
+npm run local      # serveur local sur http://localhost:8000 (les modules JS ne marchent pas en ouvrant index.html directement)
+npm test           # tests de la logique (tri, rangs, formats, zone), aussi lancés par GitHub Actions à chaque push
 ```
+
+### Code partagé
+
+[ControVisite](https://github.com/KiyoniX/ControVisite) et RadEssence ont la même base : tout ce qui est dans `js/commun/`, `css/commun.css`, `tests/commun/` et `outils/comparer-commun.mjs` est **identique dans les deux dépôts**. Chaque dépôt reste autonome (aucune dépendance entre eux), mais une correction faite d'un côté doit être recopiée de l'autre. Pour vérifier, avec les deux dépôts côte à côte :
+
+```sh
+npm run verifier-commun -- ../ControVisite
+```
+
+Ce qui est propre au site reste hors de `commun/` : `config.js`, `api.js` (lecture des données), `selection.js` (tri), `classement.js` (contenu des fiches), `marqueurs.js` (contenu de la carte) et `main.js` (état et liaison).
+Les modules communs lisent dans `config.js` les clés `zoneParDefaut`, `rayon`, `reseau`, `geocodage` et `tuiles`.
 
 ## Mettre en ligne
 
 GitHub → **Settings → Pages → Build and deployment** : *Deploy from a branch*, branche `main`, dossier `/ (root)`. Chaque push sur `main` met le site à jour en une minute environ.
+
+## Forker
+
+Un fork marche tel quel : active GitHub Pages sur ton dépôt (voir « Mettre en ligne ») et le site sera sur `https://<ton-pseudo>.github.io/<nom-du-dépôt>/`. Tous les chemins sont relatifs.
+
+**Te l'approprier** (nom, couleurs, logo) :
+
+| Quoi | Où |
+|---|---|
+| Nom, slogan, description, couleur de la barre du navigateur | `index.html` : `<title>`, `<meta name="description">`, `<meta name="theme-color">`, `<h1>` et le `<p>` qui le suit |
+| Couleurs | `css/site.css` |
+| Logo et icône d'onglet | `logo.svg` |
+| Lien « Code source » et clé de stockage du navigateur | `site` dans `js/config.js` (change `cleMemoire` pour ne pas mélanger tes réglages avec ceux du site d'origine) |
+| Zone de la première visite | `zoneParDefaut` dans `js/config.js` |
+
+**Brancher une autre source de données** (autre type de prix, autre pays…) : réécris `js/api.js` pour qu'il renvoie des objets `{ id, lat, lon, distance, … }`, puis adapte `selection.js`, `classement.js` et `marqueurs.js`. La carte, la zone, le tampon réseau, la mémoire et la vue mobile (`js/commun/`) n'ont pas à changer.
 
 ## Limites
 

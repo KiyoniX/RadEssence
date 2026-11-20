@@ -1,5 +1,12 @@
 // Tout ce qu'on peut vouloir changer se trouve ici.
+// Les modules de js/commun/ lisent aussi : zoneParDefaut, rayon, reseau, geocodage, tuiles.
 export const CONFIG = {
+  // Identité du site (le nom affiché et les couleurs sont dans index.html et css/site.css).
+  site: {
+    cleMemoire: "radessence", // clé du stockage du navigateur : à changer dans un fork
+    depot: "https://github.com/KiyoniX/RadEssence", // lien « Code source » du pied de page
+  },
+
   // Zone affichée à la première visite (ensuite : celle de l'adresse de la page, ou la dernière utilisée).
   zoneParDefaut: { lat: 45.7772, lon: 3.087, rayonKm: 8, nom: "la place de Jaude, Clermont-Ferrand" },
   rayon: { minKm: 1, maxKm: 50 },
@@ -30,8 +37,6 @@ export const CONFIG = {
     ecartAdresseMs: 150, // écart minimal entre deux requêtes à l'API des adresses
     tentatives: 3, // essais en cas de réponse 429 (trop de requêtes)
   },
-
-  depot: "https://github.com/KiyoniX/RadEssence",
 
   api: "https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/prix-des-carburants-en-france-flux-instantane-v2/records",
   geocodage: "https://data.geopf.fr/geocodage", // API Adresse de l'IGN (Géoplateforme)

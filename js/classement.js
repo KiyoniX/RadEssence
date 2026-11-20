@@ -1,63 +1,44 @@
-// Affichage de la liste : classement, ruptures, stations non suivies.
+// Affichage de la liste : classement, ruptures, stations non suivies (la structure d'une fiche est dans js/commun/liste.js).
 import { CONFIG } from "./config.js";
 import { estAncien } from "./selection.js";
-import { couleurPrix, depuis, el, kilometres, lienGoogleMaps, montant, nomStation, prixLitre } from "./format.js";
+import { fiche } from "./commun/liste.js";
+import { depuis, el, kilometres, lienGoogleMaps, montant, prixLitre } from "./commun/format.js";
 
-/** Remplit la liste <ol> du classement. `surVoir(id)` est appelé par le bouton « Sur la carte ». */
+/** Nom affiché d'une station : « Enseigne, adresse » si l'enseigne est connue (data/noms.json), sinon l'adresse. */
+export const nomStation = (s) => (s.nom ? `${s.nom}, ${s.adresse}` : s.adresse);
+
+/** Remplit la liste <ol> du classement. `surVoir(id)` montre la station sur la carte. */
 export function afficherClassement(liste, selection, { surVoir }) {
-  liste.replaceChildren(...selection.enVente.map((s) => ligneStation(s, selection, surVoir)));
+  liste.replaceChildren(...selection.enVente.map((s) => ficheStation(s, selection, surVoir)));
 }
 
-function ligneStation(s, selection, surVoir) {
-  const { code, min } = selection;
-  const c = s.carburants[code];
-  const ecartPlein = (c.prix - min) * CONFIG.pleinLitres;
-  const ancien = estAncien(c.maj);
+function ficheStation(s, selection, surVoir) {
+  const c = s.carburants[selection.code];
+  const ecartPlein = (s.prix - selection.min) * CONFIG.pleinLitres;
 
-  return el(
-    "li",
-    {
-      class: "station",
-      "data-id": s.id,
-      // Toute la carte est cliquable, sauf ses boutons et liens.
-      onclick: (e) => e.target.closest("a, button") || surVoir(s.id),
-    },
-    el("span", { class: "rang", style: `background: ${couleurPrix(c.prix, selection)}`, "aria-label": `${s.rang}e` }, s.rang),
-    el(
-      "div",
-      { class: "infos" },
+  return fiche({
+    element: s,
+    selection,
+    surVoir,
+    infos: [
       el("strong", { class: "nom" }, nomStation(s)),
       el("span", { class: "lieu" }, `${s.ville} · ${kilometres(s.distance)}`),
       el(
         "span",
         { class: "badges" },
-        el("span", { class: ancien ? "badge alerte" : "badge" }, `Prix ${depuis(c.maj)}`),
+        el("span", { class: estAncien(c.maj) ? "badge alerte" : "badge" }, `Prix ${depuis(c.maj)}`),
         s.automate24 && el("span", { class: "badge" }, "24 h/24"),
       ),
-    ),
-    el(
-      "div",
-      { class: "prix" },
-      el("span", { class: "prix-litre" }, prixLitre(c.prix)),
+    ],
+    prix: [
+      el("span", { class: "prix-principal" }, prixLitre(s.prix)),
       el(
         "span",
         { class: ecartPlein > 0 ? "ecart" : "ecart meilleur" },
         ecartPlein > 0 ? `+${montant(ecartPlein)} le plein` : "le moins cher",
       ),
-    ),
-    el(
-      "div",
-      { class: "actions" },
-      el("button", { type: "button", onclick: () => surVoir(s.id) }, "Sur la carte"),
-      el("a", { href: lienGoogleMaps(s), target: "_blank", rel: "noopener" }, "Google Maps ↗"),
-    ),
-  );
-}
-
-/** Met en évidence une station de la liste (clic sur la carte). */
-export function surligner(liste, id) {
-  for (const ligne of liste.children) ligne.classList.toggle("active", ligne.dataset.id === id);
-  liste.querySelector(`[data-id="${CSS.escape(id)}"]`)?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    ],
+  });
 }
 
 /** Section des stations en rupture temporaire pour ce carburant. */

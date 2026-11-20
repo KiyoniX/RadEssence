@@ -1,13 +1,18 @@
+// Commun à RadEssence et ControVisite : garder ce fichier identique dans les deux dépôts
+// (vérification : npm run verifier-commun -- ../AutreDepot).
+//
 // Commandes de la zone dans l'en-tête : recherche d'adresse, « Autour de moi », curseur du rayon.
-import { CONFIG } from "./config.js";
+// Éléments attendus dans index.html : #recherche, #recherche-texte, #suggestions, #ma-position, #rayon, #rayon-valeur.
+// Réglages lus dans config.js : CONFIG.rayon, CONFIG.reseau.attenteSaisieMs.
+import { CONFIG } from "../config.js";
 import { rechercherLieux } from "./geocodage.js";
 import { el } from "./format.js";
 
 const $ = (id) => document.getElementById(id);
 
 /**
- * @param surRayonProvisoire(km) pendant que le curseur bouge (aperçu)
- * @param surRayon(km)           curseur relâché
+ * @param surRayonProvisoire(km)   pendant que le curseur bouge (aperçu)
+ * @param surRayon(km)             curseur relâché
  * @param surLieu({lat, lon, nom}) lieu choisi (recherche ou position)
  * @param surErreur(message)
  * @returns {{ majRayon(km) }}

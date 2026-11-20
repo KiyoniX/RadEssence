@@ -1,5 +1,7 @@
-// Logique pure : quelles stations afficher pour un carburant, et dans quel ordre. Aucun accès au DOM.
+// Logique pure : quelles stations afficher pour un carburant, et dans quel ordre.
+// Aucun accès au DOM (testée dans tests/selection.test.js).
 import { CONFIG } from "./config.js";
+import { classerParPrix } from "./commun/liste.js";
 
 const HEURE = 3600 * 1000;
 const JOUR = 24 * HEURE;
@@ -12,16 +14,11 @@ const JOUR = 24 * HEURE;
 export function selectionner(stations, code, maintenant = new Date()) {
   const prix = (s) => s.carburants[code].prix;
 
-  const enVente = stations
-    .filter((s) => prix(s) != null && !s.carburants[code].rupture)
-    .sort((a, b) => prix(a) - prix(b) || a.distance - b.distance);
-
-  // Rang « sportif » : deux stations au même prix ont le même rang (1, 1, 3…).
-  const classees = enVente.map((s, i) => ({
-    ...s,
-    rang: i > 0 && prix(s) === prix(enVente[i - 1]) ? null : i + 1,
-  }));
-  classees.forEach((s, i) => (s.rang ??= classees[i - 1].rang));
+  // Le prix de la station pour ce carburant est recopié dans `prix`, comme attendu par js/commun/.
+  const enVente = classerParPrix(
+    stations.filter((s) => prix(s) != null && !s.carburants[code].rupture).map((s) => ({ ...s, prix: prix(s) })),
+    (s) => s.prix,
+  );
 
   const ruptures = stations
     .filter((s) => {
@@ -32,10 +29,10 @@ export function selectionner(stations, code, maintenant = new Date()) {
 
   return {
     code,
-    enVente: classees,
+    enVente,
     ruptures,
-    min: enVente.length ? prix(enVente[0]) : null,
-    max: enVente.length ? prix(enVente.at(-1)) : null,
+    min: enVente.length ? enVente[0].prix : null,
+    max: enVente.length ? enVente.at(-1).prix : null,
   };
 }
 
@@ -46,4 +43,5 @@ export function compterParCarburant(stations) {
   );
 }
 
+/** Vrai si le prix date de plus de CONFIG.prixAncienHeures heures. */
 export const estAncien = (date, maintenant = new Date()) => maintenant - date > CONFIG.prixAncienHeures * HEURE;
