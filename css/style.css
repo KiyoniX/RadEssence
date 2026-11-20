@@ -1,0 +1,147 @@
+/* Couleurs et tailles réutilisées partout : à modifier ici. */
+:root {
+  --fond: #f6f7f9;
+  --carte-fond: #ffffff;
+  --texte: #1c1f23;
+  --texte-doux: #5d6670;
+  --bordure: #e1e4e8;
+  --accent: #0b6bcb;
+  --bon: #1a7f37;
+  --alerte: #b35900;
+  --rayon: 10px;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fond: #121416;
+    --carte-fond: #1c1f23;
+    --texte: #e8eaed;
+    --texte-doux: #9aa3ad;
+    --bordure: #30363d;
+    --accent: #58a6ff;
+    --bon: #3fb950;
+    --alerte: #f0883e;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--fond);
+  color: var(--texte);
+  line-height: 1.4;
+}
+
+a { color: var(--accent); }
+
+/* En-tête */
+.entete { padding: 1rem 1rem 0.5rem; max-width: 1400px; margin: 0 auto; }
+.entete h1 { margin: 0 0 0.5rem; font-size: clamp(1.15rem, 5vw, 1.5rem); }
+.ligne-resume { display: flex; gap: 0.75rem; align-items: flex-start; }
+.resume { margin: 0; color: var(--texte-doux); flex: 1; }
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid var(--bordure);
+  background: var(--carte-fond);
+  color: var(--texte);
+  border-radius: 999px;
+  padding: 0.3rem 0.8rem;
+}
+button:hover { border-color: var(--accent); }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.onglets { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+.onglet[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.compte { margin-left: 0.4rem; font-size: 0.8em; opacity: 0.75; }
+
+/* Mise en page : liste à gauche, carte à droite ; empilées sur mobile. */
+.contenu {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0.5rem 1rem 1rem;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  align-items: start;
+}
+.carte {
+  position: sticky;
+  top: 1rem;
+  height: calc(100vh - 2rem);
+  border-radius: var(--rayon);
+  border: 1px solid var(--bordure);
+}
+
+@media (max-width: 900px) {
+  .contenu { grid-template-columns: 1fr; }
+  .carte { order: -1; position: static; height: 45vh; }
+}
+
+/* Classement */
+.classement { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+
+.station {
+  display: grid;
+  grid-template-columns: 2.2rem 1fr auto;
+  grid-template-areas: "rang infos prix" "rang actions actions";
+  gap: 0.25rem 0.75rem;
+  align-items: center;
+  padding: 0.75rem;
+  background: var(--carte-fond);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+}
+.station.active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+
+.rang { grid-area: rang; font-size: 1.2rem; font-weight: 700; color: var(--texte-doux); text-align: center; }
+.station:first-child .rang { color: var(--bon); }
+
+.infos { grid-area: infos; display: flex; flex-direction: column; min-width: 0; }
+.lieu { color: var(--texte-doux); font-size: 0.9rem; }
+.badges { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.25rem; }
+.badge { font-size: 0.75rem; padding: 0.05rem 0.45rem; border-radius: 999px; background: var(--fond); color: var(--texte-doux); }
+.badge.alerte { color: var(--alerte); font-weight: 600; }
+
+.prix { grid-area: prix; text-align: right; display: flex; flex-direction: column; }
+.prix-litre { font-size: 1.35rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.ecart { font-size: 0.8rem; color: var(--texte-doux); }
+.ecart.meilleur { color: var(--bon); font-weight: 600; }
+
+.actions { grid-area: actions; display: flex; gap: 0.75rem; align-items: center; font-size: 0.9rem; }
+.actions button { font-size: 0.85rem; padding: 0.15rem 0.6rem; }
+
+/* Encarts sous le classement */
+.encart { margin-top: 1.5rem; color: var(--texte-doux); font-size: 0.9rem; }
+.encart h2 { font-size: 1rem; color: var(--texte); margin: 0 0 0.4rem; }
+.encart p { margin: 0 0 0.4rem; }
+.encart ul { margin: 0; padding-left: 1.2rem; }
+.encart li { margin-bottom: 0.3rem; }
+
+/* Carte : bulles et légende */
+.bulle { line-height: 1.5; }
+.bulle-prix { font-size: 1.1rem; font-weight: 700; }
+.bulle-id { display: block; margin-top: 0.3rem; color: #888; }
+
+.legende {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+.degrade {
+  width: 60px;
+  height: 10px;
+  border-radius: 5px;
+  background: linear-gradient(to right, hsl(120, 70%, 40%), hsl(60, 70%, 40%), hsl(0, 70%, 40%));
+}
+
+.pied { max-width: 1400px; margin: 0 auto; padding: 0 1rem 1.5rem; font-size: 0.85rem; color: var(--texte-doux); }

@@ -1,0 +1,20 @@
+[
+  {
+    "nom": "Intermarché",
+    "adresse": "40 boulevard Marcelin Berthelot",
+    "cp": "63000",
+    "ville": "Clermont-Ferrand",
+    "lat": 45.7798,
+    "lon": 3.0718,
+    "remarque": "Ex-Casino Carburant Berthelot, ouverte 24 h/24 d'après Google Maps. Ne publie pas ses prix."
+  },
+  {
+    "nom": "Netto",
+    "adresse": "Boulevard John Fitzgerald Kennedy",
+    "cp": "63100",
+    "ville": "Clermont-Ferrand",
+    "lat": 45.7969,
+    "lon": 3.1238,
+    "remarque": "Ouverture annoncée le 25/11/2026 : ses prix apparaîtront ici dès qu'elle les publiera."
+  }
+]

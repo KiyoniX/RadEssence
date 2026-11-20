@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Carburant moins cher à Clermont-Ferrand</title>
+  <meta name="description" content="Classement en direct des prix du carburant autour de Clermont-Ferrand, d'après les données officielles prix-carburants.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛽</text></svg>">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+  <header class="entete">
+    <h1>⛽ Carburant moins cher à Clermont</h1>
+    <div class="ligne-resume">
+      <p id="resume" class="resume" aria-live="polite">Chargement des prix…</p>
+      <button id="actualiser" type="button" class="actualiser">Actualiser</button>
+    </div>
+    <nav id="carburants" class="onglets" aria-label="Carburant"></nav>
+  </header>
+
+  <main class="contenu">
+    <section class="panneau-liste" aria-label="Classement des stations">
+      <ol id="classement" class="classement"></ol>
+
+      <section id="ruptures" class="encart" hidden>
+        <h2>En rupture en ce moment</h2>
+        <ul></ul>
+      </section>
+
+      <section id="non-suivies" class="encart" hidden>
+        <h2>Stations sans prix publiés</h2>
+        <p>Ces stations existent mais n'apparaissent pas dans les données officielles.</p>
+        <ul></ul>
+      </section>
+    </section>
+
+    <div id="carte" class="carte" role="region" aria-label="Carte des stations"></div>
+  </main>
+
+  <footer class="pied">
+    <p>
+      Prix déclarés par les stations au
+      <a href="https://www.prix-carburants.gouv.fr/" target="_blank" rel="noopener">ministère de l'Économie</a>
+      (<a href="https://data.economie.gouv.fr/explore/dataset/prix-des-carburants-en-france-flux-instantane-v2/" target="_blank" rel="noopener">données ouvertes</a>,
+      Licence Ouverte). Vérifie toujours le prix à la pompe.
+      · <a id="lien-depot" href="#" target="_blank" rel="noopener">Code source</a>
+    </p>
+  </footer>
+</body>
+</html>
