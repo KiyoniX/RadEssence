@@ -137,13 +137,17 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 .rayon input { flex: 1; min-width: 0; height: 1.6rem; accent-color: var(--accent); }
 .rayon output { min-width: 3.2em; text-align: right; font-weight: 600; color: var(--texte); font-variant-numeric: tabular-nums; }
 
-.onglets { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+/* Grille de 3 colonnes : tous les carburants restent visibles, sur bureau comme sur mobile. */
+.onglets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.4rem; }
 .onglet {
-  padding: 0.35rem 0.8rem;
+  min-height: 2.4rem;
+  padding: 0.3rem 0.4rem;
   border-radius: 999px;
   border: 1px solid var(--bordure);
   background: var(--surface);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .onglet:hover { border-color: var(--accent); }
 .onglet[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--sur-accent); font-weight: 600; }
@@ -312,16 +316,6 @@ body.chargement .classement { opacity: 0.45; transition: opacity 0.2s; }
   .bouton-position { width: 2.6rem; padding: 0; }
   .bouton-position span { display: none; }
 
-  /* Les carburants défilent sur une ligne, jusqu'aux bords de l'écran */
-  .onglets {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    margin: 0 -0.75rem;
-    padding: 0 0.75rem;
-    scrollbar-width: none;
-  }
-  .onglets::-webkit-scrollbar { display: none; }
-  .onglet { flex: none; }
 
   .resume { font-size: 0.85rem; }
 
