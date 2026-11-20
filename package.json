@@ -8,7 +8,6 @@
   },
   "scripts": {
     "test": "node --test",
-    "verifier-commun": "node outils/comparer-commun.mjs",
     "local": "python -m http.server 8000"
   }
 }

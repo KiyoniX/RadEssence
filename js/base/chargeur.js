@@ -1,6 +1,3 @@
-// Commun à RadEssence et ControVisite : garder ce fichier identique dans les deux dépôts
-// (vérification : npm run verifier-commun -- ../AutreDepot).
-//
 // Lance les chargements de données : un nouveau chargement annule le précédent, et lancerBientot()
 // attend que l'utilisateur ait fini de bouger la zone (tampon contre les limites des API).
 // Pendant un chargement, <body> porte la classe « chargement ».

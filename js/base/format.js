@@ -1,6 +1,3 @@
-// Commun à RadEssence et ControVisite : garder ce fichier identique dans les deux dépôts
-// (vérification : npm run verifier-commun -- ../AutreDepot).
-//
 // Petites fonctions d'affichage, sans état. Seule el() a besoin d'un navigateur.
 
 const euros = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" });

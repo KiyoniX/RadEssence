@@ -1,8 +1,5 @@
-// Commun à RadEssence et ControVisite : garder ce fichier identique dans les deux dépôts
-// (vérification : npm run verifier-commun -- ../AutreDepot).
-//
 // Sur mobile, on voit la liste OU la carte : <body data-vue="liste|carte">, le CSS fait le reste
-// (css/commun.css, en bas). Sur ordinateur, data-vue ne change rien à l'affichage.
+// (css/base.css, en bas). Sur ordinateur, data-vue ne change rien à l'affichage.
 
 /**
  * @param bouton               bouton flottant de bascule

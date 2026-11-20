@@ -1,6 +1,3 @@
-// Commun à RadEssence et ControVisite : garder ce fichier identique dans les deux dépôts
-// (vérification : npm run verifier-commun -- ../AutreDepot).
-//
 // L'état de la page vit à deux endroits :
 //  - l'adresse (#cle=valeur&…) : un lien partagé rouvre la même recherche ;
 //  - le stockage du navigateur : la visite suivante reprend la dernière recherche.

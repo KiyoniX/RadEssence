@@ -1,8 +1,5 @@
-// Commun à RadEssence et ControVisite : garder ce fichier identique dans les deux dépôts
-// (vérification : npm run verifier-commun -- ../AutreDepot).
-//
 // La zone de recherche { lat, lon, rayonKm, nom } : validation et passage par l'adresse de la page.
-// Logique pure, sans navigateur (testée dans tests/commun/zone.test.js).
+// Logique pure, sans navigateur (testée dans tests/base/zone.test.js).
 // Réglages lus dans config.js : CONFIG.rayon, CONFIG.zoneParDefaut.
 import { CONFIG } from "../config.js";
 

@@ -1,8 +1,8 @@
-// Affichage de la liste : classement, ruptures, stations non suivies (la structure d'une fiche est dans js/commun/liste.js).
+// Affichage de la liste : classement, ruptures, stations non suivies (la structure d'une fiche est dans js/base/liste.js).
 import { CONFIG } from "./config.js";
 import { estAncien } from "./selection.js";
-import { fiche } from "./commun/liste.js";
-import { depuis, el, kilometres, lienGoogleMaps, montant, prixLitre } from "./commun/format.js";
+import { fiche } from "./base/liste.js";
+import { depuis, el, kilometres, lienGoogleMaps, montant, prixLitre } from "./base/format.js";
 
 /** Nom affiché d'une station : « Enseigne, adresse » si l'enseigne est connue (data/noms.json), sinon l'adresse. */
 export const nomStation = (s) => (s.nom ? `${s.nom}, ${s.adresse}` : s.adresse);

@@ -1,7 +1,6 @@
-// Commun à RadEssence et ControVisite : garder ce fichier identique dans les deux dépôts.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { classerParPrix } from "../../js/commun/liste.js";
+import { classerParPrix } from "../../js/base/liste.js";
 
 const elements = [
   { id: "c", prix: 80, distance: 5 },

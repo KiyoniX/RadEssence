@@ -1,5 +1,5 @@
 // Tout ce qu'on peut vouloir changer se trouve ici.
-// Les modules de js/commun/ lisent aussi : zoneParDefaut, rayon, reseau, geocodage, tuiles.
+// Les modules de js/base/ lisent aussi : zoneParDefaut, rayon, reseau, geocodage, tuiles.
 export const CONFIG = {
   // Identité du site (le nom affiché et les couleurs sont dans index.html et css/site.css).
   site: {

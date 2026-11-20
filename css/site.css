@@ -1,4 +1,4 @@
-/* Identité de RadEssence, chargée après css/commun.css. Un fork change ses couleurs ici. */
+/* Identité de RadEssence, chargée après css/base.css. Un fork change ses couleurs ici. */
 :root {
   --accent: #0b6bcb; /* liens, boutons choisis, bouton flottant */
   --sur-accent: #ffffff; /* texte posé sur l'accent */

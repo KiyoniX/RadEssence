@@ -1,7 +1,6 @@
-// Commun à RadEssence et ControVisite : garder ce fichier identique dans les deux dépôts.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { couleurPrix, depuis, distanceKm, joliTexte, montant, prixLitre, telephoneLisible } from "../../js/commun/format.js";
+import { couleurPrix, depuis, distanceKm, joliTexte, montant, prixLitre, telephoneLisible } from "../../js/base/format.js";
 
 // Intl met des espaces insécables : on les remplace par des espaces simples pour comparer.
 const espaces = (texte) => texte.replace(/\s/g, " ");

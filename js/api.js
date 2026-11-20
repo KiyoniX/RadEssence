@@ -1,7 +1,7 @@
 // Lecture du flux officiel prix-carburants (data.economie.gouv.fr), directement depuis le navigateur.
 import { CONFIG } from "./config.js";
-import { distanceKm, joliTexte } from "./commun/format.js";
-import { requeteJson } from "./commun/reseau.js";
+import { distanceKm, joliTexte } from "./base/format.js";
+import { requeteJson } from "./base/reseau.js";
 
 const PAR_PAGE = 100; // maximum accepté par l'API
 const OFFSET_MAX = 10000; // l'API refuse au-delà

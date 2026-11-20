@@ -1,7 +1,4 @@
-// Commun à RadEssence et ControVisite : garder ce fichier identique dans les deux dépôts
-// (vérification : npm run verifier-commun -- ../AutreDepot).
-//
-// Briques de la liste du classement, partagées par js/classement.js des deux sites.
+// Briques de la liste du classement, utilisées par js/classement.js.
 import { couleurPrix, el, lienGoogleMaps } from "./format.js";
 
 /**
@@ -46,7 +43,7 @@ export function surligner(liste, id) {
 
 /**
  * Classe des éléments par prix croissant (à prix égal, le plus proche d'abord), avec un rang « sportif » :
- * deux éléments au même prix ont le même rang (1, 1, 3…). Logique pure (tests/commun/liste.test.js).
+ * deux éléments au même prix ont le même rang (1, 1, 3…). Logique pure (tests/base/liste.test.js).
  * @param prixDe(element) → nombre
  */
 export function classerParPrix(elements, prixDe) {

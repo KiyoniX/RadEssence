@@ -1,7 +1,4 @@
 /* ==========================================================================
-   Commun à RadEssence et ControVisite : garder ce fichier identique dans les deux dépôts
-   (vérification : npm run verifier-commun -- ../AutreDepot).
-
    Mise en page :
    - bureau : panneau à gauche (réglages + classement), carte à droite ;
    - mobile (≤ 820 px) : la liste OU la carte, bouton flottant pour basculer.
@@ -184,7 +181,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 body.chargement .bouton-rond { animation: tourne 0.9s linear infinite; }
 @keyframes tourne { to { transform: rotate(360deg); } }
 
-/* ---------- Classement (fiches créées par js/commun/liste.js) ---------- */
+/* ---------- Classement (fiches créées par js/base/liste.js) ---------- */
 
 .classement { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
 body.chargement .classement { opacity: 0.45; transition: opacity 0.2s; }
@@ -256,7 +253,7 @@ body.chargement .classement { opacity: 0.45; transition: opacity 0.2s; }
 
 .pied { margin-top: 1.5rem; font-size: 0.78rem; color: var(--texte-doux); }
 
-/* ---------- Carte (js/commun/carte.js) ---------- */
+/* ---------- Carte (js/base/carte.js) ---------- */
 
 .astuce {
   position: absolute;
@@ -307,7 +304,7 @@ body.chargement .classement { opacity: 0.45; transition: opacity 0.2s; }
 .centre-zone:active { cursor: grabbing; }
 
 /* ==========================================================================
-   Mobile : liste OU carte, en plein écran sous l'en-tête (js/commun/vue-mobile.js)
+   Mobile : liste OU carte, en plein écran sous l'en-tête (js/base/vue-mobile.js)
    ========================================================================== */
 
 @media (max-width: 820px) {

@@ -1,6 +1,3 @@
-// Commun à RadEssence et ControVisite : garder ce fichier identique dans les deux dépôts
-// (vérification : npm run verifier-commun -- ../AutreDepot).
-//
 // Carte Leaflet (variable globale L, chargée par index.html) : la zone (cercle + point central à faire
 // glisser) et des points colorés. Ce que montre chaque point est décidé par le site (js/marqueurs.js).
 // Couleur de la zone : variable CSS --couleur-zone (css/site.css).

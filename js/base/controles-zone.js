@@ -1,6 +1,3 @@
-// Commun à RadEssence et ControVisite : garder ce fichier identique dans les deux dépôts
-// (vérification : npm run verifier-commun -- ../AutreDepot).
-//
 // Commandes de la zone dans l'en-tête : recherche d'adresse, « Autour de moi », curseur du rayon.
 // Éléments attendus dans index.html : #recherche, #recherche-texte, #suggestions, #ma-position, #rayon, #rayon-valeur.
 // Réglages lus dans config.js : CONFIG.rayon, CONFIG.reseau.attenteSaisieMs.

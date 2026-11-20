@@ -1,8 +1,7 @@
-// Commun à RadEssence et ControVisite : garder ce fichier identique dans les deux dépôts.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { CONFIG } from "../../js/config.js";
-import { bornerRayon, parametresDeZone, zoneDepuisParametres, zoneValide } from "../../js/commun/zone.js";
+import { bornerRayon, parametresDeZone, zoneDepuisParametres, zoneValide } from "../../js/base/zone.js";
 
 test("bornerRayon : entier, entre le minimum et le maximum", () => {
   assert.equal(bornerRayon(0), CONFIG.rayon.minKm);

@@ -1,6 +1,3 @@
-// Commun à RadEssence et ControVisite : garder ce fichier identique dans les deux dépôts
-// (vérification : npm run verifier-commun -- ../AutreDepot).
-//
 // Toutes les requêtes passent ici : écart minimal entre deux requêtes vers une même API,
 // et nouveaux essais espacés quand l'API répond 429 (trop de requêtes).
 // Réglages lus dans config.js : CONFIG.reseau.tentatives.

@@ -1,7 +1,7 @@
 // Logique pure : quelles stations afficher pour un carburant, et dans quel ordre.
 // Aucun accès au DOM (testée dans tests/selection.test.js).
 import { CONFIG } from "./config.js";
-import { classerParPrix } from "./commun/liste.js";
+import { classerParPrix } from "./base/liste.js";
 
 const HEURE = 3600 * 1000;
 const JOUR = 24 * HEURE;
@@ -14,7 +14,7 @@ const JOUR = 24 * HEURE;
 export function selectionner(stations, code, maintenant = new Date()) {
   const prix = (s) => s.carburants[code].prix;
 
-  // Le prix de la station pour ce carburant est recopié dans `prix`, comme attendu par js/commun/.
+  // Le prix de la station pour ce carburant est recopié dans `prix`, comme attendu par js/base/.
   const enVente = classerParPrix(
     stations.filter((s) => prix(s) != null && !s.carburants[code].rupture).map((s) => ({ ...s, prix: prix(s) })),
     (s) => s.prix,

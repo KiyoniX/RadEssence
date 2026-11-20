@@ -1,19 +1,19 @@
 // Point d'entrée de RadEssence : état (zone, carburant), chargement et affichage.
-// Les briques génériques (carte, zone, chargement, mémoire, vue mobile) sont dans js/commun/.
+// Les briques génériques (carte, zone, chargement, mémoire, vue mobile) sont dans js/base/.
 import { CONFIG } from "./config.js";
 import { chargerStations } from "./api.js";
 import { compterParCarburant, selectionner } from "./selection.js";
 import { afficherClassement, afficherNonSuivies, afficherRuptures } from "./classement.js";
 import { pointsCarte } from "./marqueurs.js";
-import { creerCarte } from "./commun/carte.js";
-import { creerChargeur } from "./commun/chargeur.js";
-import { creerControlesZone } from "./commun/controles-zone.js";
-import { distanceKm, el, heure, joliTexte, montant, prixLitre } from "./commun/format.js";
-import { nommerPoint } from "./commun/geocodage.js";
-import { surligner } from "./commun/liste.js";
-import { creerMemoire, ecrireParametresPage, lireParametresPage } from "./commun/memoire.js";
-import { creerVueMobile } from "./commun/vue-mobile.js";
-import { parametresDeZone, zoneDepuisParametres, zoneValide } from "./commun/zone.js";
+import { creerCarte } from "./base/carte.js";
+import { creerChargeur } from "./base/chargeur.js";
+import { creerControlesZone } from "./base/controles-zone.js";
+import { distanceKm, el, heure, joliTexte, montant, prixLitre } from "./base/format.js";
+import { nommerPoint } from "./base/geocodage.js";
+import { surligner } from "./base/liste.js";
+import { creerMemoire, ecrireParametresPage, lireParametresPage } from "./base/memoire.js";
+import { creerVueMobile } from "./base/vue-mobile.js";
+import { parametresDeZone, zoneDepuisParametres, zoneValide } from "./base/zone.js";
 
 const $ = (id) => document.getElementById(id);
 const memoire = creerMemoire(CONFIG.site.cleMemoire);

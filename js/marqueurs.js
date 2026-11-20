@@ -1,6 +1,6 @@
-// Ce que la carte montre pour chaque station : couleur, taille, infobulle et bulle (voir js/commun/carte.js).
+// Ce que la carte montre pour chaque station : couleur, taille, infobulle et bulle (voir js/base/carte.js).
 import { nomStation } from "./classement.js";
-import { couleurPrix, depuis, el, lienGoogleMaps, prixLitre } from "./commun/format.js";
+import { couleurPrix, depuis, el, lienGoogleMaps, prixLitre } from "./base/format.js";
 
 const GRIS = "#8a8a8a";
 
